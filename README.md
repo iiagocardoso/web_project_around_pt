@@ -6,19 +6,19 @@ Around The U.S. é uma aplicação web que permite ao usuário visualizar e gere
 
 ## Funcionalidades
 
-Editar perfil (nome e descrição)
-Adicionar novo cartão de lugar
-Curtir/descurtir cartões
-Fechar pop-ups com Esc, clique no overlay ou botão de
-fechar.
+- Editar perfil (nome e descrição)
+- Adicionar novo cartão de lugar
+- Curtir/descurtir cartões
+- Fechar pop-ups com Esc, clique no overlay ou botão de
+- fechar.
 
 ## Tecnologias
 
-HTML5
-CSS3 (Flexbox e Grid)
-Metodologia BEM
-JavaScript
+- HTML5
+- CSS3 (Flexbox e Grid)
+- Metodologia BEM
+- JavaScript
 
 ## Link do projeto
 
-Disponível em:
+[Acesse Around The U.S.](https://iiagocardoso.github.io/web_project_around_pt/)
