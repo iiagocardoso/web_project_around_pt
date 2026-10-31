@@ -120,10 +120,16 @@ const fillProfileForm = function () {
   inputName.value = profileName.textContent;
   inputDescription.value = profileDescription.textContent;
 };
+
 const handleOpenEditModal = function () {
   fillProfileForm();
   openModal(popupEdit);
+  allInputsProfile.forEach((input) => {
+    const errorElementSpan = popupEdit.querySelector(`#${input.id}-error`);
+    hideInputError(input, errorElementSpan);
+  });
 };
+
 const handleProfileFormSubmit = function (evt) {
   evt.preventDefault();
   profileName.textContent = inputName.value;
@@ -203,6 +209,7 @@ const handleCardFormSubmit = function (evt) {
   evt.preventDefault();
   renderCard(inputNameCard.value, inputImageCard.value, cardContainer);
   closeModal(newCardPopup);
+  newCardForm.reset();
 };
 
 newCardForm.addEventListener("submit", handleCardFormSubmit);
