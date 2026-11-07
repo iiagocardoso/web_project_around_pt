@@ -1,3 +1,13 @@
+import Card from "./Card.js";
+import FormValidator from "./FormValidator.js";
+import {
+  currentOpenPopup,
+  openModal,
+  closeModal,
+  handleEscClose,
+  handleOverlayClick,
+} from "./utils.js";
+
 const initialCards = [
   {
     name: "Vale de Yosemite",
@@ -35,72 +45,26 @@ const closeImagePopupBtn = imagePopup.querySelector(".popup__close");
 const newCardPopup = document.querySelector("#new-card-popup");
 const profileForm = popupEdit.querySelector("#edit-profile-form");
 const newCardForm = newCardPopup.querySelector("#new-card-form");
-const allInputsProfile = profileForm.querySelectorAll(".popup__input");
-const allInputsCard = newCardForm.querySelectorAll(".popup__input");
-const buttonElementProfile = popupEdit.querySelector(".popup__button");
-const buttonElementCard = newCardForm.querySelector(".popup__button");
 const popupList = document.querySelectorAll(".popup");
 
-const showInputError = function (input, errorElementSpan) {
-  input.classList.add("popup__input_type_error");
-  errorElementSpan.textContent = input.validationMessage;
-  errorElementSpan.classList.add("popup__error_visible");
+const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
 };
 
-const hideInputError = function (input, errorElementSpan) {
-  input.classList.remove("popup__input_type_error");
-  errorElementSpan.textContent = "";
-  errorElementSpan.classList.remove("popup__error_visible");
-};
+const profileFormValidator = new FormValidator(validationConfig, profileForm);
+const cardFormValidator = new FormValidator(validationConfig, newCardForm);
 
-const checkInputValidity = function (input, form) {
-  const errorElementSpan = form.querySelector(`#${input.id}-error`);
-  if (!input.validity.valid) {
-    showInputError(input, errorElementSpan);
-  } else {
-    hideInputError(input, errorElementSpan);
-  }
-};
-
-const toggleButtonState = (inputs, button) => {
-  const arrayInputs = Array.from(inputs);
-  const hasInvalidInput = arrayInputs.some((input) => !input.validity.valid);
-  button.disabled = hasInvalidInput;
-  if (hasInvalidInput) {
-    button.classList.add("popup__button_disabled");
-  } else {
-    button.classList.remove("popup__button_disabled");
-  }
-};
-
-allInputsProfile.forEach((input) => {
-  input.addEventListener("input", () => {
-    checkInputValidity(input, profileForm);
-    toggleButtonState(allInputsProfile, buttonElementProfile);
-  });
-});
-
-allInputsCard.forEach((input) => {
-  input.addEventListener("input", () => {
-    checkInputValidity(input, newCardForm);
-    toggleButtonState(allInputsCard, buttonElementCard);
-  });
-});
+profileFormValidator.setEventListeners();
+cardFormValidator.setEventListeners();
 
 closeImagePopupBtn.addEventListener("click", function () {
   closeModal(imagePopup);
 });
-
-let currentOpenPopup;
-
-const openModal = function (popup) {
-  popup.classList.add("popup_is-opened");
-  currentOpenPopup = popup;
-};
-
-const closeModal = function (popup) {
-  popup.classList.remove("popup_is-opened");
-};
 
 profileEdit.addEventListener("click", function () {
   handleOpenEditModal();
@@ -124,10 +88,7 @@ const fillProfileForm = function () {
 const handleOpenEditModal = function () {
   fillProfileForm();
   openModal(popupEdit);
-  allInputsProfile.forEach((input) => {
-    const errorElementSpan = popupEdit.querySelector(`#${input.id}-error`);
-    hideInputError(input, errorElementSpan);
-  });
+  profileFormValidator.resetValidation();
 };
 
 const handleProfileFormSubmit = function (evt) {
@@ -139,14 +100,6 @@ const handleProfileFormSubmit = function (evt) {
 
 profileForm.addEventListener("submit", handleProfileFormSubmit);
 
-const handleLikeBtn = function (evt) {
-  evt.target.classList.toggle("card__like-button_is-active");
-};
-
-const handleDeleteCardBtn = function (evt) {
-  evt.target.parentElement.remove();
-};
-
 const handleCardImageClick = function (evt) {
   bigImagePopup.src = evt.target.src;
   captionImagePopup.textContent =
@@ -155,34 +108,11 @@ const handleCardImageClick = function (evt) {
   openModal(imagePopup);
 };
 
-const cardTemplate = document
-  .querySelector("#card-template")
-  .content.querySelector(".card");
-
-const getCardElement = function (name, link) {
-  const cardElement = cardTemplate.cloneNode(true);
-  const cardTitle = cardElement.querySelector(".card__title");
-  const cardImage = cardElement.querySelector(".card__image");
-  const cardLikeBtn = cardElement.querySelector(".card__like-button");
-  const cardDeleteBtn = cardElement.querySelector(".card__delete-button");
-
-  cardLikeBtn.addEventListener("click", handleLikeBtn);
-
-  cardDeleteBtn.addEventListener("click", handleDeleteCardBtn);
-
-  cardImage.addEventListener("click", handleCardImageClick);
-
-  cardTitle.textContent = name;
-  cardImage.src = link;
-  cardImage.alt = name;
-
-  return cardElement;
-};
-
 const cardContainer = document.querySelector(".cards__list");
+
 const renderCard = function (name, link, container) {
-  const newCard = getCardElement(name, link);
-  container.prepend(newCard);
+  const newCard = new Card(name, link, "#card-template", handleCardImageClick);
+  container.prepend(newCard._getCardElement());
 };
 
 initialCards.forEach(function (item) {
@@ -214,19 +144,7 @@ const handleCardFormSubmit = function (evt) {
 
 newCardForm.addEventListener("submit", handleCardFormSubmit);
 
-const handleEscClose = function (evt) {
-  if (evt.key === "Escape") {
-    closeModal(currentOpenPopup);
-  }
-};
-
 document.addEventListener("keydown", handleEscClose);
-
-const handleOverlayClick = function (evt) {
-  if (evt.target === evt.currentTarget) {
-    closeModal(currentOpenPopup);
-  }
-};
 
 popupList.forEach((popup) => {
   popup.addEventListener("click", handleOverlayClick);
