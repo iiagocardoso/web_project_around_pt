@@ -37,8 +37,10 @@ class FormValidator {
     );
     if (hasInvalidInput) {
       buttonElement.classList.add(this._config.inactiveButtonClass);
+      buttonElement.disabled = true;
     } else {
       buttonElement.classList.remove(this._config.inactiveButtonClass);
+      buttonElement.disabled = false;
     }
   }
 
@@ -46,6 +48,7 @@ class FormValidator {
     const allInputs = Array.from(
       this._formElement.querySelectorAll(this._config.inputSelector),
     );
+    this._toggleButtonState(allInputs);
     allInputs.forEach((input) => {
       input.addEventListener("input", () => {
         this._checkInputValidity(input);

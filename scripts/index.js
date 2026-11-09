@@ -112,7 +112,7 @@ const cardContainer = document.querySelector(".cards__list");
 
 const renderCard = function (name, link, container) {
   const newCard = new Card(name, link, "#card-template", handleCardImageClick);
-  container.prepend(newCard._getCardElement());
+  container.prepend(newCard.getCardElement());
 };
 
 initialCards.forEach(function (item) {
@@ -122,12 +122,24 @@ initialCards.forEach(function (item) {
 const newCardBtn = document.querySelector(".profile__add-button");
 const closeCardBtn = newCardPopup.querySelector(".popup__close");
 
+const cleanClosePopup = function () {
+  if (currentOpenPopup === newCardPopup) {
+    closeModal(currentOpenPopup);
+    newCardForm.reset();
+    cardFormValidator.resetValidation();
+  } else {
+    closeModal(currentOpenPopup);
+  }
+};
+
 newCardBtn.addEventListener("click", function () {
   openModal(newCardPopup);
 });
 
 closeCardBtn.addEventListener("click", function () {
-  closeModal(newCardPopup);
+  cleanClosePopup();
+  newCardForm.reset();
+  cardFormValidator.resetValidation();
 });
 
 const inputNameCard = newCardPopup.querySelector(
@@ -144,8 +156,12 @@ const handleCardFormSubmit = function (evt) {
 
 newCardForm.addEventListener("submit", handleCardFormSubmit);
 
-document.addEventListener("keydown", handleEscClose);
+document.addEventListener("keydown", (evt) => {
+  handleEscClose(evt, cleanClosePopup);
+});
 
 popupList.forEach((popup) => {
-  popup.addEventListener("click", handleOverlayClick);
+  popup.addEventListener("click", (evt) => {
+    handleOverlayClick(evt, cleanClosePopup);
+  });
 });

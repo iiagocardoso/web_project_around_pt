@@ -15,7 +15,7 @@ class Card {
     return cardElement;
   }
 
-  _getCardElement() {
+  getCardElement() {
     this._cardElement = this._getTemplate();
     this._cardTitle = this._cardElement.querySelector(".card__title");
     this._cardImage = this._cardElement.querySelector(".card__image");

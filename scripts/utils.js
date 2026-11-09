@@ -9,15 +9,15 @@ const closeModal = function (popup) {
   popup.classList.remove("popup_is-opened");
 };
 
-const handleEscClose = function (evt) {
+const handleEscClose = function (evt, cleanClosePopup) {
   if (evt.key === "Escape") {
-    closeModal(currentOpenPopup);
+    cleanClosePopup();
   }
 };
 
-const handleOverlayClick = function (evt) {
+const handleOverlayClick = function (evt, cleanClosePopup) {
   if (evt.target === evt.currentTarget) {
-    closeModal(currentOpenPopup);
+    cleanClosePopup();
   }
 };
 
